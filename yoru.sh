@@ -126,7 +126,7 @@ build_kernel() {
     
     # 1. Hapus file 'as' bawaan ZyC Clang agar tidak membajak GNU Assembler milik Ubuntu
     # Pastikan nama foldernya sesuai dengan yang diekstrak di yoru.yml (zyc-clang)
-    rm -f "$ROOTDIR/zyc-clang/bin/as"
+    rm -f "$ROOTDIR/clang-zyc/bin/as"
    
     # 2. Eksekusi kompilasi dengan mematikan Integrated Assembler (LLVM_IAS=0)
     #    dan mengarahkan cross-compile ke GNU Assembler Ubuntu
