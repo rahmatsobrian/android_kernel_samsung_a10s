@@ -121,15 +121,19 @@ build_kernel() {
     }
 
     BUILD_START=$(TZ=Asia/Jakarta date +%s)
+    BUILD_START=$(TZ=Asia/Jakarta date +%s)
 
     echo -e "$yellow[+] Building Kernel [${VARIANT}]...$white"
     
-    # 1. Hapus file 'as' bawaan ZyC Clang agar tidak membajak GNU Assembler milik Ubuntu
-    # Pastikan nama foldernya sesuai dengan yang diekstrak di yoru.yml (zyc-clang)
+    # 1. Hapus 'as' dan 'ld' bawaan ZyC Clang yang bikin konflik
     rm -f "$ROOTDIR/clang-zyc/bin/as"
+    rm -f "$ROOTDIR/clang-zyc/bin/ld"
    
-    # 2. Eksekusi kompilasi dengan mematikan Integrated Assembler (LLVM_IAS=0)
-    #    dan mengarahkan cross-compile ke GNU Assembler Ubuntu
+    # 2. Bikin symlink (jalan pintas) supaya 'ld' diarahkan ke 'ld.lld'
+    ln -sf "$ROOTDIR/clang-zyc/bin/ld.lld" "$ROOTDIR/clang-zyc/bin/ld"
+    ln -sf "$ROOTDIR/clang-zyc/bin/ld.lld" "$ROOTDIR/clang-zyc/bin/aarch64-linux-gnu-ld"
+
+    # 3. Eksekusi kompilasi
     make -j$(nproc --all) \
         ARCH=arm64 \
         ANDROID_MAJOR_VERSION=r \
