@@ -22,7 +22,7 @@ KIMG_DTB="$OUTDIR/Image.gz-dtb"
 KIMG="$OUTDIR/Image.gz"
 
 # ========== TOOLCHAIN (CLANG) ===========
-export PATH="$ROOTDIR/zyc-clang/bin:$PATH"
+export PATH="$ROOTDIR/clang-zyc/bin:$PATH"
 #export PATH="$ROOTDIR/clang903/bin:$PATH"
 #TC64="aarch64-linux-gnu-"
 #TC32="arm-linux-gnueabi-"
