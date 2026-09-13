@@ -123,28 +123,13 @@ build_kernel() {
     BUILD_START=$(TZ=Asia/Jakarta date +%s)
 
     echo -e "$yellow[+] Building Kernel [${VARIANT}]...$white"
-   
-    #make -j$(nproc --all) \
-       # ARCH=arm64 \
-      #  O=out \
-      #  CC=clang \
-      #  LD=ld.lld \
-      #  AR=llvm-ar \
-       # NM=llvm-nm \
-     #   OBJCOPY=llvm-objcopy \
-     #   OBJDUMP=llvm-objdump \
-       # STRIP=llvm-strip \
-     #   CLANG_TRIPLE=aarch64-linux-gnu- \
-     #   CROSS_COMPILE=$TC64 \
-      #  CROSS_COMPILE_ARM32=$TC32 \
-     #   CROSS_COMPILE_COMPAT=$TC32 \
-     #   KCFLAGS=-w \
-      #  CONFIG_SECTION_MISMATCH_WARN_ONLY=y || {
-        #    send_telegram_error
-       #     exit 1
-      #  }
     
-    # Eksekusi kompilasi utama dengan flag sapu jagat
+    # 1. Hapus file 'as' bawaan ZyC Clang agar tidak membajak GNU Assembler milik Ubuntu
+    # Pastikan nama foldernya sesuai dengan yang diekstrak di yoru.yml (zyc-clang)
+    rm -f "$ROOTDIR/zyc-clang/bin/as"
+   
+    # 2. Eksekusi kompilasi dengan mematikan Integrated Assembler (LLVM_IAS=0)
+    #    dan mengarahkan cross-compile ke GNU Assembler Ubuntu
     make -j$(nproc --all) \
         ARCH=arm64 \
         ANDROID_MAJOR_VERSION=r \
@@ -153,11 +138,15 @@ build_kernel() {
         LLVM=1 \
         CC=clang \
         LD=ld.lld \
+        CLANG_TRIPLE=aarch64-linux-gnu- \
+        CROSS_COMPILE=aarch64-linux-gnu- \
+        CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+        CROSS_COMPILE_COMPAT=arm-linux-gnueabi- \
+        AS=aarch64-linux-gnu-as \
+        LLVM_IAS=0 \
         KCFLAGS=-w \
         CONFIG_SECTION_MISMATCH_WARN_ONLY=y \
-        CONFIG_WLAN_DRV_BUILD_IN=y \
-        CROSS_COMPILE=aarch64-linux-gnu- \
-        CROSS_COMPILE_ARM32=arm-linux-gnueabi- || {
+        CONFIG_WLAN_DRV_BUILD_IN=y || {
             send_telegram_error
             exit 1
         }
