@@ -147,8 +147,15 @@ build_kernel() {
     # Eksekusi kompilasi utama dengan flag sapu jagat
     make -j$(nproc --all) \
         ARCH=arm64 \
+        ANDROID_MAJOR_VERSION=r \
+        PLATFORM_VERSION=11 \
         O=out \
+        LLVM=1 \
         CC=clang \
+        LD=ld.lld \
+        KCFLAGS=-w \
+        CONFIG_SECTION_MISMATCH_WARN_ONLY=y \
+        CONFIG_WLAN_DRV_BUILD_IN=y \
         CROSS_COMPILE=aarch64-linux-gnu- \
         CROSS_COMPILE_ARM32=arm-linux-gnueabi- || {
             send_telegram_error
